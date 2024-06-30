@@ -31,6 +31,10 @@ class YoutubeToAudio:
         self.line2 = Label
         self.progress_text = Label
 
+        # Status Variables
+        # -------------------------------------
+        self.programIsRunning = False
+
     def isValidExportPath(self, export_path: str) -> bool:
         return os.path.exists(export_path) and os.path.isdir(export_path)
     
@@ -39,8 +43,7 @@ class YoutubeToAudio:
         if "youtube.com/watch?v=" not in url:
             print("does not contain youtube.com/watch?v=")
             return False
-        # elif "youtu.be/" not in url:
-        #     return False
+
         
         try: 
             response = requests.head(url, timeout=5, allow_redirects=False)
@@ -50,6 +53,12 @@ class YoutubeToAudio:
         
         return True
     
+    # def toggleButton(self) -> None:
+    #     if self.programIsRunning:
+    #         self.convert_btn.configure(state="disabled")
+    #     else:
+    #         self.convert_btn.configure(state="normal")
+
     def isValidFileName(self) -> bool:
         pass
 
@@ -90,6 +99,7 @@ class YoutubeToAudio:
         return export_path
     
     def handleConversion(self) -> None:
+    
         # check if the export path is valid
         # check if video can be downloaded 
         video_url = self.getVideoURL()
@@ -113,9 +123,8 @@ class YoutubeToAudio:
         #     self.convert_btn.configure(state="disabled")
         #     self.thread = threading.Thread(target=self.script_handler.downloadFromURL, args=(video_url, export_path, file_name, self.progress_lbl), daemon=True)
         #     self.thread.start()
-        self.convert_btn.configure(state="disabled")
-        self.thread = threading.Thread(target=self.script_handler.downloadFromURL, args=(video_url, export_path, file_name, self.progress_lbl), daemon=True)
-        self.thread.start()
+        thread = threading.Thread(target=self.script_handler.downloadFromURL, args=(video_url, export_path, file_name, self.progress_lbl, self.convert_btn), daemon=True)
+        thread.start()
 
     
                                
@@ -124,6 +133,7 @@ class YoutubeToAudio:
         # ---------------------------------
         self.root.title('YouTube to Audio Converter')
         self.root.geometry(f"{self.width}x{self.height}")
+        self.root.grid_columnconfigure(0, weight=1)
 
         # Elements
         # ----------------------------------
@@ -133,7 +143,7 @@ class YoutubeToAudio:
 
         self.file_entry_lbl = Label(self.root, text="Path to export directory:")
         self.file_entry = Entry(self.root, width=43)
-        self.choose_dir_button = Button(self.root, text="Choose", width=5, command=self.chooseExportPath)
+        self.choose_dir_button = Button(self.root, text="Choose", width=7, command=self.chooseExportPath)
         self.line = Label(self.root, text="---------------------------------------")
 
         self.file_name_entry_lbl = Label(self.root, text="Audio file name:")
@@ -141,7 +151,7 @@ class YoutubeToAudio:
         self.line3 = Label(self.root, text="---------------------------------------")
 
 
-        self.convert_btn = Button(self.root, text="Convert to mp3", width=10, command= self.handleConversion)
+        self.convert_btn = Button(self.root, text="Convert to mp3", width=15, command= self.handleConversion)
         self.progress_text = Label(self.root, text="Ready to Go!")
 
         self.progress_lbl = Label(self.root, text="")
@@ -165,8 +175,8 @@ class YoutubeToAudio:
     def runProgram(self):
         self.root.mainloop()
 
-        if not self.thread.is_alive:
-            self.convert_btn.configure(state="normal")
+
+                    
             
         
      

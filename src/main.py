@@ -5,7 +5,7 @@ from youtube_to_audio import YoutubeToAudio
 # Main
 # ------------------------------
 def main() -> None:
-    yt = YoutubeToAudio(400, 500)
+    yt = YoutubeToAudio(425, 350)
     yt.initializeGUI()
     yt.runProgram()
 
