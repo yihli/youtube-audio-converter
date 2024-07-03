@@ -5,10 +5,41 @@ import requests
 import os
 import threading
 
-
 class YoutubeToAudio:
+    """ YoutubeToAudio Class
+    Handles the App GUI and logic for downloading YouTube audio
+
+    Attributes
+    ---------------
+    width - int:
+    width of the application window
+
+    height - int:
+    height of the application window
+
+    root - Tk():
+    tkinter app root
+
+    script_handler - CommandHandler():
+    class to handle subprocess wsl commands
+
+    programIsRunning - boolean:
+    signifies whether a YouTube audio is currently being downloaded
+    """
+
 
     def __init__(self, width: int, height: int) -> None:
+        """ Constructor
+        Initializes the size of the application and the Tkinter and CommandHandler classes
+
+        Parameters
+        ---------------
+        width - int:
+        width of the application window
+
+        height - int:
+        height of the application window
+        """
         # Info 
         # ---------------------------------------
         self.width = width
@@ -19,23 +50,23 @@ class YoutubeToAudio:
         self.root = Tk()
         self.script_handler = CommandHandler()
 
-        # Root GUI Elements
-        # --------------------------------------
-        self.lbl = Label
-        self.file_entry = Entry
-        self.video_url_entry = Entry
-        self.choose_dir_button = Button
-        self.convert_btn = Button
-        self.file_entry_lbl = Label
-        self.line = Label
-        self.line2 = Label
-        self.progress_text = Label
-
         # Status Variables
         # -------------------------------------
         self.programIsRunning = False
 
     def isValidExportPath(self, export_path: str) -> bool:
+        """
+        Checks if the given directory exists on the computer
+
+        Parameters
+        -----------------
+        export_path - str:
+        The directory path to check
+
+        Returns
+        ----------------
+        True if the given directory exists
+        """
         return os.path.exists(export_path) and os.path.isdir(export_path)
     
     def isValidYoutubeURL(self, url: str) -> bool:
@@ -52,12 +83,6 @@ class YoutubeToAudio:
             return False
         
         return True
-    
-    # def toggleButton(self) -> None:
-    #     if self.programIsRunning:
-    #         self.convert_btn.configure(state="disabled")
-    #     else:
-    #         self.convert_btn.configure(state="normal")
 
     def isValidFileName(self) -> bool:
         pass
@@ -118,16 +143,9 @@ class YoutubeToAudio:
 
         print(f'{export_path}{file_name}.mp3')
 
-
-        # if self.isValidYoutubeURL(video_url):
-        #     self.convert_btn.configure(state="disabled")
-        #     self.thread = threading.Thread(target=self.script_handler.downloadFromURL, args=(video_url, export_path, file_name, self.progress_lbl), daemon=True)
-        #     self.thread.start()
         thread = threading.Thread(target=self.script_handler.downloadFromURL, args=(video_url, export_path, file_name, self.progress_lbl, self.convert_btn), daemon=True)
         thread.start()
-
-    
-                               
+     
     def initializeGUI(self) -> None:
         # Window creation
         # ---------------------------------
